@@ -10,6 +10,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#define CODEBUF_SIZE 8192
+
 int main(int argc, char **argv)
 {
   ao_device *device;
@@ -22,7 +24,7 @@ int main(int argc, char **argv)
   float seconds;
 
   char *codebuf;
-  codebuf = calloc(512, sizeof(char));
+  codebuf = calloc(CODEBUF_SIZE, sizeof(char));
 
   ao_initialize();
 
@@ -54,11 +56,10 @@ int main(int argc, char **argv)
 
   if (argv[1]) {
     FILE* file = fopen(argv[1],"r");
-    fread(codebuf, sizeof(char), 512, file);
+    fread(codebuf, sizeof(char), CODEBUF_SIZE, file);
     fclose(file);
   } else {
-    /* sprintf(codebuf,"440 0.1 sine"); */
-    printf("Usage: stream [path to file]\n");
+    printf("Usage: sporth_ao_stream [path to file]\n");
     return 0;
   }
 
@@ -69,7 +70,6 @@ int main(int argc, char **argv)
 
   modified_time = attr.st_mtime;
 
-  printf("%s\n", codebuf);
   if (plumber_parse_string(&pd, codebuf) != PLUMBER_OK) return 0;
   plumber_compute(&pd, PLUMBER_INIT);
 
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
       modified_time = attr.st_mtime;
 
       FILE* file = fopen(argv[1],"r");
-      fread(codebuf, sizeof(char), 512, file);
+      fread(codebuf, sizeof(char), CODEBUF_SIZE, file);
       fclose(file);
 
       plumber_recompile_string(&pd, codebuf);

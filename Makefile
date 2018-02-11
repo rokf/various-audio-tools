@@ -1,10 +1,11 @@
 
-LIBS=-lsporth -lsoundpipe -lsndfile -lao -lm
-CC=gcc
+LDLIBS=-lsporth -lsoundpipe -lsndfile -lao -lm
 
-all:
-	$(CC) sporth_ao.c $(LIBS) -o sporth_ao
-	$(CC) sporth_ao_stream.c $(LIBS) -o sporth_ao_stream
+all: sporth_ao sporth_ao_stream
+
+sporth_ao: sporth_ao.c
+sporth_ao_stream: sporth_ao_stream.c
+
 clean:
 	rm sporth_ao sporth_ao_stream
 

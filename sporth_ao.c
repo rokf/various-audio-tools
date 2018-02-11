@@ -6,6 +6,8 @@
 #include <sporth.h>
 #include <ao/ao.h>
 
+#define CODEBUF_SIZE 8192
+
 int main(int argc, char **argv)
 {
   ao_device *device;
@@ -18,7 +20,7 @@ int main(int argc, char **argv)
   int seconds;
 
   char *codebuf;
-  codebuf = calloc(512, sizeof(char));
+  codebuf = calloc(CODEBUF_SIZE, sizeof(char));
 
   ao_initialize();
 
@@ -48,12 +50,13 @@ int main(int argc, char **argv)
   pd.sp = sp;
   if (argv[1]) {
     FILE* file = fopen(argv[1],"r");
-    fread(codebuf, sizeof(char), 512, file);
+    fread(codebuf, sizeof(char), CODEBUF_SIZE, file);
     fclose(file);
   } else {
-    sprintf(codebuf,"440 0.1 sine");
+    printf("Usage: sporth_ao [path to file] [length in seconds]\n");
+    return 0;
   }
-  printf("%s\n", codebuf);
+
   if (plumber_parse_string(&pd, codebuf) != PLUMBER_OK) return 0;
   plumber_compute(&pd, PLUMBER_INIT);
 
